@@ -9,7 +9,7 @@ const productSchema = new Schema(
       required: [true, "Please insert name of product."],
     },
     barcode: {
-      type: String,
+      type: Number,
     },
     price: {
       type: Number,
@@ -34,11 +34,11 @@ const productSchema = new Schema(
       enum: ["available", "sold"],
       default: "available",
     },
-    owner: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: [true, "You need an owner id"],
-    },
+    // owner: {
+    //   type: Schema.Types.ObjectId,
+    //   ref: "User",
+    //   required: [true, "You need an owner id"],
+    // },
   },
   {
     timestamps: true,

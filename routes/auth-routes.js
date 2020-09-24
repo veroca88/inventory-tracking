@@ -23,4 +23,4 @@ router.get("/", (req, res, next) => {
 //   }
 // });
 
-module.exports = authRouter;
+module.exports = router;
