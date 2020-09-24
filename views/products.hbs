@@ -1,0 +1,53 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div class="card my-5">
+                <div class="card-body">
+                    <h5 class="card-title text-center">New Product</h5>
+
+                    <form class="form-newProduct" id="form" action="/newProduct" method="POST">
+                        <div class="form-group">
+                            <label for="productName">Product Name</label>
+                            <input type="text" class="form-control" id="productName" aria-describedby="productName"
+                                placeholder="Enter product name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="date">Choose Date</label>
+                            <input type="date" class="form-control" id="date" aria-describedby="date"
+                                placeholder="Enter date">
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity">Quantity</label>
+                            <input type="number" class="form-control" id="quantity" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="price">Price</label>
+                            <input type="text" class="form-control" id="price" aria-describedby="price">
+                            {{!-- <small id="emailHelp" class="form-text text-muted">Use your favorite nickname.</small> --}}
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <input type="text" class="form-control" id="description"
+                                aria-describedby="description-product" placeholder="Enter description of product">
+                        </div>
+                        <div class="form-group">
+                            <label for="availability">Availability</label>
+                            <select name="type" class="form-control" id="availability"
+                                aria-describedby="availability-product">
+                                <option value="available" selected>Available</option>
+                                <option value="sold">Sold</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="scanInput">Scan Barcode</label>
+                            <video id="video" width="300" height="200" style="border: 1px solid gray"></video>
+                            {{!-- <input type="video" class="form-control" id="scanInput" aria-describedby="scanInput"> --}}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
