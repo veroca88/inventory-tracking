@@ -1,26 +1,78 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcryptjs")
+
+const bcrypSalt = 10;
 
 const routeGuard = require("../configs/route-guard.config");
 const User = require("../models/User.model");
 
-router.get("/", (req, res, next) => {
-  console.log("hey :)");
+router.get("/signup", (req, res, next) => {
   res.render("auth-views/signup");
 });
 
-// authRouter.post("/", (req, res) => {
-//   const { firstName, lastName, username, email, password } = req.body;
+router.post("/signup", (req, res, next) => {
+  const { firstName, lastName, username, email, password } = req.body;
 
-//   if (
-//     firstName === "" ||
-//     lastName === "" ||
-//     username === "" ||
-//     password === "" ||
-//     email === ""
-//   ) {
-//     res.render("auth-views/signup");
-//   }
-// });
+  //If form is empty remember to specify name in each input of form otherwise the form is going to be empty
+  if (
+    firstName === "" ||
+    lastName === "" ||
+    username === "" ||
+    password === "" ||
+    email === ""
+  ) {
+    res.render("auth-views/signup", {
+      errorMessage: "Please fill up all the form."
+    });
+    return;
+  }
+
+  //If user already exist or username is already taken
+
+  User.findOne({
+    email,
+  })
+  .then(user => {
+    if (user !== null) {
+      res.render("auth-views/signup", {
+        errorMessage: "The email already exists!"
+      })
+      return;
+    }
+
+    //Set up security
+
+    bcrypt.genSaltSync(bcrypSalt)
+    .then(salt => bcrypt.hash(password, salt))
+    //We are going to create the new user
+
+    .then(hashedPassword => {
+      return User.create({ firstName, lastName, username, email, passwordHash: hashedPassword })
+    .then(() => {
+      res.redirect("/login")
+    })
+    .catch(error => console.log(error))    
+  })
+  .catch(error => next(error))
+});
+})
+
+router.get("/login", (req, res, next) => {
+  res.render("auth-views/login")
+})
+
+router.post("/login", (req, res, next) => {
+  const userEmail = req.body.email;
+  const userPasswd = req.body.password
+
+  if (userEmail === "" || userPasswd === "") {
+    res.render('auth-views/login', {
+      errorMessage: "Please enter both, email and password"
+    });
+    return
+  }
+})
 
 module.exports = router;
+
