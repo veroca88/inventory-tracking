@@ -45,7 +45,8 @@ app.set("view engine", "hbs");
 // Routes
 
 app.use("/", require("./routes/index"));
-app.use("/signup", require("./routes/auth-routes"));
+app.use("/", require("./routes/auth-routes"));
+// app.use("/", require("./routes/"))
 app.use("/products", require("./routes/products"));
 
 // catch 404 and forward to error handler
