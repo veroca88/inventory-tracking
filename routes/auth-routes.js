@@ -72,6 +72,10 @@ router.post("/login", (req, res, next) => {
     });
     return
   }
+
+  User.findOne({
+    email: userEmail
+  })
 })
 
 module.exports = router;
