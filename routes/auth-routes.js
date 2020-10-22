@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcryptjs")
+const bcrypt = require("bcrypt")
 
-const bcrypSalt = 10;
+const bcryptSalt = 10;
+
 
 const routeGuard = require("../configs/route-guard.config");
 const User = require("../models/User.model");
@@ -13,7 +14,7 @@ router.get("/signup", (req, res, next) => {
 
 router.post("/signup", (req, res, next) => {
   const { firstName, lastName, username, email, password } = req.body;
-
+  
   //If form is empty remember to specify name in each input of form otherwise the form is going to be empty
   if (
     firstName === "" ||
@@ -21,34 +22,35 @@ router.post("/signup", (req, res, next) => {
     username === "" ||
     password === "" ||
     email === ""
-  ) {
-    res.render("auth-views/signup", {
-      errorMessage: "Please fill up all the form."
-    });
-    return;
-  }
-
-  //If user already exist or username is already taken
-
-  User.findOne({
-    email,
-  })
-  .then(user => {
-    if (user !== null) {
+    ) {
       res.render("auth-views/signup", {
-        errorMessage: "The email already exists!"
-      })
+        errorMessage: "Please fill up all the form."
+      });
       return;
     }
+    
+    //If user already exist or username is already taken
+    
+    User.findOne({
+      email,
+    })
+    .then(user => {
+      if (user !== null) {
+        res.render("auth-views/signup", {
+          errorMessage: "The email already exists!"
+        })
+        return;
+      }
+      
+      //Set up security
+      
+      
+    const salt = bcrypt.genSaltSync(bcryptSalt);
+    const hashPass = bcrypt.hashSync(password, salt);
 
-    //Set up security
-
-    bcrypt.genSaltSync(bcrypSalt)
-    .then(salt => bcrypt.hash(password, salt))
     //We are going to create the new user
 
-    .then(hashedPassword => {
-      return User.create({ firstName, lastName, username, email, passwordHash: hashedPassword })
+    User.create({ firstName, lastName, username, email, passwordHash: hashPass })
     .then(() => {
       res.redirect("/login")
     })
@@ -56,13 +58,13 @@ router.post("/signup", (req, res, next) => {
   })
   .catch(error => next(error))
 });
-})
 
 router.get("/login", (req, res, next) => {
   res.render("auth-views/login")
 })
 
 router.post("/login", (req, res, next) => {
+  console.log("REQ.BODY", req.dody)
   const userEmail = req.body.email;
   const userPasswd = req.body.password
 
@@ -76,6 +78,30 @@ router.post("/login", (req, res, next) => {
   User.findOne({
     email: userEmail
   })
+
+  //If user is not on DB
+  .then(userFromDB => {
+    console.log("USERFROM DB", userFromDB)
+    if (userFromDB === null) {
+      res.render("auth-views/login", {
+        errorMessage: "That username was not found in the system"
+      })
+      return
+    }
+
+    //If the user is in the DB we compare passwords
+    if (bcrypt.compare(userPasswd, userFromDB.password)) {
+      // console.log("REQ.SESSION", req.session)
+      req.session.user = userFromDB
+      res.redirect("/")
+    } else {
+      res.render("auth-views/login", {
+        errorMessage: "Incorrect Password"
+      })
+      return
+    }
+  })
+  .catch(err => next(err))
 })
 
 module.exports = router;
