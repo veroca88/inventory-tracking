@@ -64,7 +64,6 @@ router.get("/login", (req, res, next) => {
 })
 
 router.post("/login", (req, res, next) => {
-  console.log("REQ.BODY", req.dody)
   const userEmail = req.body.email;
   const userPasswd = req.body.password
 
