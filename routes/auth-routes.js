@@ -92,7 +92,7 @@ router.post("/login", (req, res, next) => {
     if (bcrypt.compare(userPasswd, userFromDB.password)) {
       // console.log("REQ.SESSION", req.session)
       req.session.user = userFromDB
-      res.redirect("/")
+      res.redirect("/products")
     } else {
       res.render("auth-views/login", {
         errorMessage: "Incorrect Password"
